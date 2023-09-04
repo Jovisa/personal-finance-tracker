@@ -2,6 +2,8 @@ package com.tw.personalfinancetracker.controller;
 
 import com.tw.personalfinancetracker.model.Transaction;
 import com.tw.personalfinancetracker.service.TransactionService;
+import jakarta.annotation.Nullable;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,17 +18,19 @@ public class TransactionController {
     }
 
     @GetMapping("/transactions")
-    public List<Transaction> getTransactionsData() {
-        return transactionService.getAllTransactions();
+    public List<Transaction> getTransactionsData(@Nullable @RequestParam String filterByType) {
+        return filterByType == null
+                ? transactionService.getAllTransactions()
+                : transactionService.getAllTransactions(filterByType);
     }
 
     @PostMapping("transactions/new")
-    public void addTransaction(@RequestBody Transaction transaction) {
+    public void addTransaction(@Valid @RequestBody Transaction transaction) {
         transactionService.save(transaction);
     }
 
     @PutMapping("transactions/{id}")
-    public void updateTransaction(@PathVariable Long id, @RequestBody Transaction transaction) {
+    public void updateTransaction(@PathVariable Long id, @Valid @RequestBody Transaction transaction) {
         transaction.setId(id);
         transactionService.update(transaction);
     }
