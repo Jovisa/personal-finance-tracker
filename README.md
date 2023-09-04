@@ -66,7 +66,9 @@ when parameter is not present endpoint returns all Transactions, if present only
 ]
 }
 ```
+<br>
 
+- with applied filter, user will get Transactions of the desired type and `Summary` section shows only `totalIncome` or `totalExpense` depending on the filter
 - #### respose with applied filter  `filterByType = income` 
 ```json
 {
@@ -112,9 +114,6 @@ when parameter is not present endpoint returns all Transactions, if present only
   ]
 }
 ```
- <br>
-
-We're getting only Transactions of the given type and Summary section shows only total income
 <br><br>
 
 `POST` `/transactions/new`
