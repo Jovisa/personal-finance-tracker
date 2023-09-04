@@ -1,6 +1,7 @@
 package com.tw.personalfinancetracker.controller;
 
 import com.tw.personalfinancetracker.model.Transaction;
+import com.tw.personalfinancetracker.model.dto.TransactionDataResponse;
 import com.tw.personalfinancetracker.service.TransactionService;
 import jakarta.annotation.Nullable;
 import jakarta.validation.Valid;
@@ -18,7 +19,7 @@ public class TransactionController {
     }
 
     @GetMapping("/transactions")
-    public List<Transaction> getTransactionsData(@Nullable @RequestParam String filterByType) {
+    public TransactionDataResponse getTransactionsData(@Nullable @RequestParam String filterByType) {
         return filterByType == null
                 ? transactionService.getAllTransactions()
                 : transactionService.getAllTransactions(filterByType);

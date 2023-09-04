@@ -3,10 +3,16 @@ package com.tw.personalfinancetracker.service;
 import com.tw.personalfinancetracker.exception.TransactionNotFoundException;
 import com.tw.personalfinancetracker.exception.WrongFilterException;
 import com.tw.personalfinancetracker.model.Transaction;
+import com.tw.personalfinancetracker.model.dto.Summary;
+import com.tw.personalfinancetracker.model.dto.SummaryFactory;
+import com.tw.personalfinancetracker.model.dto.TransactionDataResponse;
 import com.tw.personalfinancetracker.repository.TransactionRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+
+import static com.tw.personalfinancetracker.util.Constants.EXPENSE;
+import static com.tw.personalfinancetracker.util.Constants.INCOME;
 
 @Service
 public class TransactionService {
@@ -33,17 +39,30 @@ public class TransactionService {
         repository.deleteById(transactionId);
     }
 
-    public List<Transaction> getAllTransactions() {
-        return repository.findAll();
+    public TransactionDataResponse getAllTransactions() {
+        List<Transaction> transactions = repository.findAll();
+        Summary summary = SummaryFactory.buildSummary(transactions); // SumaryFactory
+        return TransactionDataResponse.builder()
+                .summary(summary)
+                .transactions(transactions)
+                .build();
     }
 
-    public List<Transaction> getAllTransactions(String filterByType) {
+
+    public TransactionDataResponse getAllTransactions(String filterByType) {
         validateFilter(filterByType);
-        return repository
-                .findAll()
+
+        List<Transaction> transactions = repository.findAll()
                 .stream()
                 .filter(t -> t.getType().equals(filterByType))
                 .toList();
+
+        Summary summary = SummaryFactory.buildSummary(transactions, filterByType);
+
+        return TransactionDataResponse.builder()
+                .summary(summary)
+                .transactions(transactions)
+                .build();
     }
 
     private void validateFilter(String typeToFilter) {
