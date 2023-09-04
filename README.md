@@ -1,6 +1,6 @@
 # Personal Finance Tracker
 The tracker keeps a record of financial transactions for a user. 
-Trough RESTful APIs. it is possible to do all CRUD operations with Transactions, as well as basic `filtering by type (income or expenses)`
+All CRUD operations are enabled Trough RESTful APIs, as well as basic `filtering by type (income or expenses)`
 
 
 ### Stack:
@@ -31,7 +31,8 @@ when parameter is not present endpoint returns all Transactions, if present only
 
 - #### response without a filter:
 
-`{
+```json
+{
 "summary": {
 "totalIncome": 2200.0,
 "totalExpense": 1350.0,
@@ -42,31 +43,33 @@ when parameter is not present endpoint returns all Transactions, if present only
 "id": 1,
 "type": "income",
 "amount": 2100.0,
-"description": "test grrr"
+"description": "salary"
 },
 {
 "id": 2,
 "type": "income",
 "amount": 100.0,
-"description": "test grrr"
+"description": "got on poker"
 },
 {
 "id": 3,
 "type": "expense",
 "amount": 1300.0,
-"description": ""
+"description": "car repair"
 },
 {
 "id": 4,
 "type": "expense",
-"amount": 50.0,
-"description": ""
+"amount": 150.0,
+"description": "house expences"
 }
 ]
-}`
+}
+```
 
-- #### respose with  `filterByType = income` 
-`{
+- #### respose with applied filter  `filterByType = income` 
+```json
+{
 "summary": {
 "totalIncome": 2200.0
 },
@@ -75,32 +78,74 @@ when parameter is not present endpoint returns all Transactions, if present only
 "id": 1,
 "type": "income",
 "amount": 2100.0,
-"description": "test grrr"
+"description": "salary"
 },
 {
 "id": 2,
-"type": "income",
-"amount": 100.0,
-"description": "test grrr"
+"type": "got on poker",
+"amount": 150.0,
+"description": "weekend trip"
 }
 ]
-}` <br>
+}
+```
+
+- #### respose with applied filter  `filterByType = expense`
+```json
+{
+  "summary": {
+    "totalExpense": 1350.0
+  },
+  "transactions": [
+    {
+      "id": 3,
+      "type": "expense",
+      "amount": 1300.0,
+      "description": "car repair"
+    },
+    {
+      "id": 4,
+      "type": "expense",
+      "amount": 150.0,
+      "description": "house expences"
+    }
+  ]
+}
+```
+ <br>
 
 We're getting only Transactions of the given type and Summary section shows only total income
 <br><br>
 
-- `POST` `/transactions/new`
-Endpoint for creating Transactions
-#### example request body
-`    {
+`POST` `/transactions/new`
+- Endpoint for creating new Transactions
+- #### example request body
+```json
+{
 "type": "expense",
 "amount": 50.0,
 "description": "new expense"
-}`
+}
+```
+<br>
 
-- `PUT` `/transactions/{id}`
+`PUT` `/transactions/{id}`
+- updates Transaction
+- #### example POST request:
+
+- url: `/transactions/3`
+- request body:
+```json
+{
+    "type": "income",
+    "amount": 1100.0,
+    "description": "upaded amount, changed type"
+}
+```
+<br>
 
 - `DELETE` `/transactions/{id}`
+- deletes Transaction with the given Id from the database
 
 
 
