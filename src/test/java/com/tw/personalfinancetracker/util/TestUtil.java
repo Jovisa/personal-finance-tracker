@@ -7,6 +7,12 @@ import com.tw.personalfinancetracker.model.dto.TransactionDataResponse;
 import java.util.List;
 
 public class TestUtil {
+
+    public static final List<Transaction> TRANSACTIONS = List.of(
+            new Transaction( 1L, "income", 1.0, ""),
+            new Transaction(2L, "expense", 2.0, "")
+    );
+
     public static TransactionDataResponse generateResponse() {
         final List<Transaction> transactions = List.of(
                 new Transaction( 1L, "income", 1000.0, ""),
