@@ -11,9 +11,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-import static com.tw.personalfinancetracker.util.Constants.EXPENSE;
-import static com.tw.personalfinancetracker.util.Constants.INCOME;
-
 @Service
 public class TransactionService {
 

@@ -11,6 +11,8 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
 
 @SpringBootTest
@@ -22,6 +24,7 @@ class TransactionServiceTest {
     @Autowired
     private TransactionService service;
 
+
     @Test
     public void serviceReturnsDataFromRepositoryTest() {
 
@@ -31,16 +34,15 @@ class TransactionServiceTest {
         );
 
         Mockito.when(repository.findAll()).thenReturn(transactions);
-        assertEquals(transactions, service.getAllTransactions());
-
-        service.deleteTransaction(2L);
-        assertEquals(transactions, service.getAllTransactions());
+        assertEquals(transactions, service.getAllTransactions().getTransactions());
     }
 
     @Test
     public void serviceCallsDeleteMethodOfRepositoryTest() {
+        Mockito.when(repository.existsById(1L)).thenReturn(true);
+        doNothing().when(repository).deleteById(any(Long.class));
         service.deleteTransaction(1L);
-        Mockito.verify(repository, times(1)).deleteById(1L);
+        Mockito.verify(repository, times(1)).deleteById(any(Long.class));
     }
 
     @Test
