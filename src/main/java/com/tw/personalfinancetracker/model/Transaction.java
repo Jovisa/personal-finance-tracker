@@ -19,9 +19,11 @@ public class Transaction {
     private Long id;
     private String type;
     private Double amount;
+    private String description;
 
-    public Transaction(String type, Double amount) {
+    public Transaction(String type, Double amount, String description) {
         this.type = type;
         this.amount = amount;
+        this.description = description;
     }
 }

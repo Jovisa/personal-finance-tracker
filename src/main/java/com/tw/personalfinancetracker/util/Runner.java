@@ -19,8 +19,8 @@ public class Runner implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        repository.save(new Transaction("bla", 1.0));
-        repository.save(new Transaction("truc", 2.0));
+        repository.save(new Transaction("bla", 1.0, ""));
+        repository.save(new Transaction("truc", 2.0, ""));
 
         List<Transaction> transactions = repository.findAll();
 
