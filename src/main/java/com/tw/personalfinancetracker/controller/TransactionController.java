@@ -7,11 +7,11 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-public class TransactionsController {
+public class TransactionController {
 
     private final TransactionService transactionService;
 
-    public TransactionsController(TransactionService transactionService) {
+    public TransactionController(TransactionService transactionService) {
         this.transactionService = transactionService;
     }
 

@@ -1,7 +1,7 @@
 package com.tw.personalfinancetracker.service;
 
 import com.tw.personalfinancetracker.model.Transaction;
-import com.tw.personalfinancetracker.repository.TransactionsRepository;
+import com.tw.personalfinancetracker.repository.TransactionRepository;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +17,7 @@ import static org.mockito.Mockito.times;
 class TransactionServiceTest {
 
     @MockBean
-    private TransactionsRepository repository;
+    private TransactionRepository repository;
 
     @Autowired
     private TransactionService service;

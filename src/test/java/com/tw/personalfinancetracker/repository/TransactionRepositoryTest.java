@@ -11,10 +11,10 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
-class TransactionsRepositoryTest {
+class TransactionRepositoryTest {
 
     @Autowired
-    private TransactionsRepository repository;
+    private TransactionRepository repository;
 
 
     @BeforeEach

@@ -1,7 +1,7 @@
 package com.tw.personalfinancetracker.service;
 
 import com.tw.personalfinancetracker.model.Transaction;
-import com.tw.personalfinancetracker.repository.TransactionsRepository;
+import com.tw.personalfinancetracker.repository.TransactionRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -9,9 +9,9 @@ import java.util.List;
 @Service
 public class TransactionService {
 
-    private final TransactionsRepository repository;
+    private final TransactionRepository repository;
 
-    public TransactionService(TransactionsRepository repository) {
+    public TransactionService(TransactionRepository repository) {
         this.repository = repository;
     }
 
