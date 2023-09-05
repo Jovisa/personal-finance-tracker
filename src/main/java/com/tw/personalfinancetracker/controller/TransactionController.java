@@ -5,6 +5,8 @@ import com.tw.personalfinancetracker.model.dto.TransactionDataResponse;
 import com.tw.personalfinancetracker.service.TransactionService;
 import jakarta.annotation.Nullable;
 import jakarta.validation.Valid;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -19,20 +21,25 @@ public class TransactionController {
 
     @GetMapping("/transactions")
     public TransactionDataResponse getTransactionsData(
-            @Nullable @RequestParam String filterByType
+            @Nullable @RequestParam String filterByType,
+            @AuthenticationPrincipal UserDetails userDetails
     ) {
-        return filterByType == null
-                ? transactionService.getAllTransactions()
-                : transactionService.getAllTransactions(filterByType);
+        return transactionService.getAllTransactions(userDetails, filterByType);
     }
 
     @PostMapping("transactions/new")
-    public void addTransaction(@Valid @RequestBody Transaction transaction) {
+    public void addTransaction(
+            @Valid @RequestBody Transaction transaction,
+            @AuthenticationPrincipal UserDetails userDetails
+    ) {
+        transaction.setUserId(userDetails.getUsername());
         transactionService.save(transaction);
     }
 
     @PutMapping("transactions/{id}")
-    public void updateTransaction(@PathVariable Long id, @Valid @RequestBody Transaction transaction) {
+    public void updateTransaction(
+            @PathVariable Long id,
+            @Valid @RequestBody Transaction transaction) {
         transaction.setId(id);
         transactionService.update(transaction);
     }

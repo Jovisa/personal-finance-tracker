@@ -24,8 +24,8 @@ class TransactionRepositoryTest {
 
     @Test
     public void repositoryCreatesAndGetsEntitiesTest() {
-        repository.save(new Transaction(1, "income", 1.0, ""));
-        repository.save(new Transaction(1, "expense", 2.0, ""));
+        repository.save(new Transaction("1", "income", 1.0, ""));
+        repository.save(new Transaction("1", "expense", 2.0, ""));
 
         List<Transaction> transactions = repository.findAll();
 
@@ -37,8 +37,8 @@ class TransactionRepositoryTest {
 
     @Test
     public void deleteTransactionByIdTest() {
-        Transaction incomeTransaction = repository.save(new Transaction(1, "income", 1.0, ""));
-        Transaction expenseTransaction = repository.save(new Transaction(1, "expense", 2.0, ""));
+        Transaction incomeTransaction = repository.save(new Transaction("1", "income", 1.0, ""));
+        Transaction expenseTransaction = repository.save(new Transaction("1", "expense", 2.0, ""));
 
         List<Transaction> transactions = repository.findAll();
 
@@ -53,8 +53,8 @@ class TransactionRepositoryTest {
 
     @Test
     public void updateTransactionTest() {
-        Transaction incomeTransaction = repository.save(new Transaction(1, "income", 1.0, "income description"));
-        Transaction expenseTransaction = repository.save(new Transaction(1, "expense", 2.0, ""));
+        Transaction incomeTransaction = repository.save(new Transaction("1", "income", 1.0, "income description"));
+        Transaction expenseTransaction = repository.save(new Transaction("1", "expense", 2.0, ""));
 
         List<Transaction> transactions = repository.findAll();
         assertEquals(2, transactions.size());

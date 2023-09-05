@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -21,10 +22,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
+//@ContextConfiguration(classes = {SecurityConfiguration.class, UserDetails.class,})
 class TransactionControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
+
+    @MockBean
+    public UserDetails userDetails;
 
     @MockBean
     private TransactionService service;
@@ -32,7 +37,13 @@ class TransactionControllerTest {
     @Test
     @WithMockUser(username = "user2", password = "user2")
     public void transactionInfoEndpointTest() throws Exception {
-        when(service.getAllTransactions())
+//        when(userDetails.getUsername())
+//                .thenReturn("user2");
+//
+//        when(userDetails.getPassword())
+//                .thenReturn("user2");
+
+        when(service.getAllTransactions(any(), any()))
                 .thenReturn(TestUtil.generateResponse());
 
         mockMvc.perform(get("/transactions"))
@@ -43,9 +54,11 @@ class TransactionControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "user2", password = "user2")
+    @WithMockUser(username = "1", password = "user2")
     public void transactionInfoWithFilterIncomeTest() throws Exception {
-        when(service.getAllTransactions("income"))
+        when(userDetails.getUsername())
+                .thenReturn("1");
+        when(service.getAllTransactions(userDetails, "income"))
                 .thenReturn(TestUtil.generateFilteredResponse());
 
         mockMvc.perform(get("/transactions")
