@@ -39,10 +39,17 @@ public class SecurityConfiguration {
                 .password("user2")
                 .roles("USER")
                 .build();
+        UserDetails admin = User.withDefaultPasswordEncoder()
+                .username("admin")
+                .password("admin")
+                .roles("ADMIN")
+                .build();
 
         var userDetailsManager = new InMemoryUserDetailsManager();
         userDetailsManager.createUser(user1);
         userDetailsManager.createUser(user2);
+        userDetailsManager.createUser(admin);
+
         return userDetailsManager;
     }
 

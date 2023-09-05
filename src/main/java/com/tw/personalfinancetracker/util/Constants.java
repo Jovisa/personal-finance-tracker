@@ -2,8 +2,11 @@ package com.tw.personalfinancetracker.util;
 
 public class Constants {
 
-    //Types of transactions
-    public static String INCOME = "income";
-    public static String EXPENSE = "expense";
+    // Transaction types
+    public static final String INCOME = "income";
+    public static final String EXPENSE = "expense";
+
+    // Roles
+    public static final String ROLE_ADMIN = "ROLE_ADMIN";
 
 }

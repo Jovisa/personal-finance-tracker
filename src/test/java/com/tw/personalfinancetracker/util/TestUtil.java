@@ -1,7 +1,6 @@
 package com.tw.personalfinancetracker.util;
 
 import com.tw.personalfinancetracker.model.Transaction;
-import com.tw.personalfinancetracker.model.dto.SummaryFactory;
 import com.tw.personalfinancetracker.model.dto.TransactionDataResponse;
 
 import java.util.List;
@@ -23,10 +22,7 @@ public class TestUtil {
                 new Transaction(6L, "1", "expense", 21.0, "")
         );
 
-        return TransactionDataResponse.builder()
-                .summary(SummaryFactory.buildSummary(transactions))
-                .transactions(transactions)
-                .build();
+        return new TransactionDataResponse(transactions);
     }
 
     public static TransactionDataResponse generateFilteredResponse() {
@@ -36,9 +32,6 @@ public class TestUtil {
                 new Transaction( 3L, "1", "income", 500.00, "")
         );
 
-        return TransactionDataResponse.builder()
-                .summary(SummaryFactory.buildSummary(transactions))
-                .transactions(transactions)
-                .build();
+        return new TransactionDataResponse(transactions);
     }
 }

@@ -9,7 +9,7 @@ import lombok.*;
 @Getter
 @Setter
 @Builder
-@JsonDeserialize(builder = TransactionDataResponse.TransactionDataResponseBuilder.class)
+@JsonDeserialize(builder = Summary.SummaryBuilder.class)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Summary {
     private Double totalIncome;

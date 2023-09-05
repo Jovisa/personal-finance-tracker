@@ -1,16 +1,16 @@
 package com.tw.personalfinancetracker.controller;
 
 import com.tw.personalfinancetracker.model.Transaction;
+import com.tw.personalfinancetracker.model.TransactionServiceRequest;
 import com.tw.personalfinancetracker.model.dto.TransactionDataResponse;
 import com.tw.personalfinancetracker.service.TransactionService;
 import jakarta.annotation.Nullable;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
-
-import java.security.Principal;
 
 @RestController
 @RequiredArgsConstructor
@@ -21,9 +21,21 @@ public class TransactionController {
     @GetMapping("/transactions")
     public TransactionDataResponse getTransactionsData(
             @Nullable @RequestParam String typeFilter,
-            Principal principal
+            @AuthenticationPrincipal UserDetails user
     ) {
-        return transactionService.getAllTransactions(principal.getName(), typeFilter);
+        var serviceRequest = TransactionServiceRequest
+                .builder()
+                .userAuthorities(
+                    user.getAuthorities()
+                            .stream()
+                            .map(GrantedAuthority::getAuthority)
+                            .toList()
+                )
+                .userId(user.getUsername())
+                .typeFilter(typeFilter)
+                .build();
+
+        return transactionService.getAllTransactions(serviceRequest);
     }
 
     @PostMapping("transactions/new")
