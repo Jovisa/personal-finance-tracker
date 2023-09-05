@@ -9,27 +9,21 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-//@ContextConfiguration(classes = {SecurityConfiguration.class, UserDetails.class,})
 class TransactionControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
-
-    @MockBean
-    public UserDetails userDetails;
 
     @MockBean
     private TransactionService service;
@@ -37,12 +31,6 @@ class TransactionControllerTest {
     @Test
     @WithMockUser(username = "user2", password = "user2")
     public void transactionInfoEndpointTest() throws Exception {
-//        when(userDetails.getUsername())
-//                .thenReturn("user2");
-//
-//        when(userDetails.getPassword())
-//                .thenReturn("user2");
-
         when(service.getAllTransactions(any(), any()))
                 .thenReturn(TestUtil.generateResponse());
 
@@ -51,22 +39,24 @@ class TransactionControllerTest {
                 .andExpect(jsonPath("$.transactions", Matchers.hasSize(6)))
                 .andExpect(jsonPath("$.summary.totalIncome", Matchers.equalTo(4900.0)))
                 .andExpect(jsonPath("$.summary.totalExpense", Matchers.equalTo(2735.0)));
+
+        verify(service,times(1))
+                .getAllTransactions("user2", null);
     }
 
     @Test
-    @WithMockUser(username = "1", password = "user2")
-    public void transactionInfoWithFilterIncomeTest() throws Exception {
-        when(userDetails.getUsername())
-                .thenReturn("1");
-        when(service.getAllTransactions(userDetails, "income"))
+    @WithMockUser(username = "user2", password = "user2")
+    public void transactionInfoWithFilterTest() throws Exception {
+
+        when(service.getAllTransactions(any(), any()))
                 .thenReturn(TestUtil.generateFilteredResponse());
 
         mockMvc.perform(get("/transactions")
-                        .param("filterByType", "income"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.transactions", Matchers.hasSize(3)))
-                .andExpect(jsonPath("$.summary.totalIncome", Matchers.equalTo(4900.0)))
-                .andExpect(jsonPath("$.summary.totalExpense", Matchers.equalTo(0.0)));
+                        .param("typeFilter", "income"))
+                .andExpect(status().isOk());
+
+        verify(service,times(1))
+                .getAllTransactions("user2", "income");
     }
 
     @Test

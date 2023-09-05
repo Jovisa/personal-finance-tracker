@@ -5,26 +5,25 @@ import com.tw.personalfinancetracker.model.dto.TransactionDataResponse;
 import com.tw.personalfinancetracker.service.TransactionService;
 import jakarta.annotation.Nullable;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
+
 @RestController
+@RequiredArgsConstructor
 public class TransactionController {
 
     private final TransactionService transactionService;
 
-    public TransactionController(TransactionService transactionService) {
-        this.transactionService = transactionService;
-    }
-
-
     @GetMapping("/transactions")
     public TransactionDataResponse getTransactionsData(
-            @Nullable @RequestParam String filterByType,
-            @AuthenticationPrincipal UserDetails userDetails
+            @Nullable @RequestParam String typeFilter,
+            Principal principal
     ) {
-        return transactionService.getAllTransactions(userDetails, filterByType);
+        return transactionService.getAllTransactions(principal.getName(), typeFilter);
     }
 
     @PostMapping("transactions/new")
@@ -39,7 +38,8 @@ public class TransactionController {
     @PutMapping("transactions/{id}")
     public void updateTransaction(
             @PathVariable Long id,
-            @Valid @RequestBody Transaction transaction) {
+            @Valid @RequestBody Transaction transaction
+    ) {
         transaction.setId(id);
         transactionService.update(transaction);
     }
@@ -48,4 +48,5 @@ public class TransactionController {
     public void deleteTransaction(@PathVariable Long id) {
         transactionService.deleteTransaction(id);
     }
+
 }

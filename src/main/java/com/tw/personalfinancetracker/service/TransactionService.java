@@ -7,20 +7,17 @@ import com.tw.personalfinancetracker.model.dto.Summary;
 import com.tw.personalfinancetracker.model.dto.SummaryFactory;
 import com.tw.personalfinancetracker.model.dto.TransactionDataResponse;
 import com.tw.personalfinancetracker.repository.TransactionRepository;
-import org.springframework.security.core.userdetails.UserDetails;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Objects;
 
 @Service
+@RequiredArgsConstructor
 public class TransactionService {
 
     private final TransactionRepository repository;
-
-    public TransactionService(TransactionRepository repository) {
-        this.repository = repository;
-    }
 
 
     public void save(Transaction transaction) {
@@ -38,10 +35,10 @@ public class TransactionService {
         repository.deleteById(transactionId);
     }
 
-    public TransactionDataResponse getAllTransactions(UserDetails userDetails, String typeFilter) {
+    public TransactionDataResponse getAllTransactions(String username, String typeFilter) {
         List<Transaction> transactions = getListOfAllTransactions(typeFilter)
                 .stream()
-                .filter(t -> Objects.equals(userDetails.getUsername(), t.getUserId()))
+                .filter(t -> Objects.equals(username, t.getUserId()))
                 .toList();
 
         Summary summary = SummaryFactory.buildSummary(transactions); // SumaryFactory
