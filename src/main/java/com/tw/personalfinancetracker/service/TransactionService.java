@@ -38,8 +38,6 @@ public class TransactionService {
         repository.deleteById(transactionId);
     }
 
-
-
     public TransactionDataResponse getAllTransactions(UserDetails userDetails, String typeFilter) {
         List<Transaction> transactions = getListOfAllTransactions(typeFilter)
                 .stream()
@@ -65,38 +63,4 @@ public class TransactionService {
                 .filter(t -> t.getType().equals(typeFilter))
                 .toList();
     }
-
-
-
-//    private TransactionDataResponse getAllTransactions() {
-//        List<Transaction> transactions = repository.findAll();
-//        Summary summary = SummaryFactory.buildSummary(transactions); // SumaryFactory
-//        return TransactionDataResponse.builder()
-//                .summary(summary)
-//                .transactions(transactions)
-//                .build();
-//    }
-//
-//
-//    private TransactionDataResponse getAllTransactions(String filterByType) {
-//        validateFilter(filterByType);
-//
-//        List<Transaction> transactions = repository.findAll()
-//                .stream()
-//                .filter(t -> t.getType().equals(filterByType))
-//                .toList();
-//
-//        Summary summary = SummaryFactory.buildSummary(transactions, filterByType);
-//
-//        return TransactionDataResponse.builder()
-//                .summary(summary)
-//                .transactions(transactions)
-//                .build();
-//    }
-
-//    private void validateFilter(String typeToFilter) {
-//        if (!typeToFilter.matches("^(income|expense)$")) {
-//            throw new WrongFilterException("type must be 'income' or 'expense'");
-//        }
-//    }
 }
