@@ -79,14 +79,14 @@ class TransactionServiceTest {
 
     @Test
     public void serviceCallsRepositoryToUpdateTransaction() {
-        Transaction transaction = new Transaction( 1L, "income", 1.0, "");
+        Transaction transaction = new Transaction( 1L, 1,  "income", 1.0, "");
         service.update(transaction);
         Mockito.verify(repository, times(1)).save(transaction);
     }
 
     @Test
     public void serviceCallRpositoryToAddNewTransactionTest() {
-        Transaction transaction = new Transaction( 1L, "income", 1.0, "");
+        Transaction transaction = new Transaction( 1L, 1, "income", 1.0, "");
         service.save(transaction);
         Mockito.verify(repository, times(1)).save(transaction);
     }

@@ -22,6 +22,8 @@ public class Transaction {
     @GeneratedValue(strategy= GenerationType.AUTO)
     private Long id;
 
+    private int userId;
+
     @Pattern(
             regexp = "^(income|expense)$",
             message = "type must be 'income' or 'expense'"
@@ -33,7 +35,8 @@ public class Transaction {
 
     private String description;
 
-    public Transaction(String type, Double amount, String description) {
+    public Transaction(int userId, String type, Double amount, String description) {
+        this.userId = userId;
         this.type = type;
         this.amount = amount;
         this.description = description;

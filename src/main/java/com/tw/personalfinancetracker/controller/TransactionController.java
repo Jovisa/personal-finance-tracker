@@ -5,13 +5,7 @@ import com.tw.personalfinancetracker.model.dto.TransactionDataResponse;
 import com.tw.personalfinancetracker.service.TransactionService;
 import jakarta.annotation.Nullable;
 import jakarta.validation.Valid;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
-
-import java.security.Principal;
-import java.sql.SQLOutput;
 
 @RestController
 public class TransactionController {
@@ -25,8 +19,7 @@ public class TransactionController {
 
     @GetMapping("/transactions")
     public TransactionDataResponse getTransactionsData(
-            @Nullable @RequestParam String filterByType,
-            @AuthenticationPrincipal UserDetails userDetails
+            @Nullable @RequestParam String filterByType
     ) {
         return filterByType == null
                 ? transactionService.getAllTransactions()
