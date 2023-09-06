@@ -22,48 +22,58 @@ All CRUD operations are enabled Trough RESTful APIs, as well as basic `filtering
 - build project with command `gradlew clean build` or via IDE
 - run project with command `gradlew bootRun` or via IDE
 
+## Security
+
+- Application has predefined in-memory Users defined in [Security Configuration](https://github.com/Jovisa/personal-finance-tracker/blob/security/src/main/java/com/tw/personalfinancetracker/config/SecurityConfiguration.java)
+- endpoints can be accessed by authenticated users only
+- users with the role `ADMIN` can perform all CRUD operations on all `Transactions` without any limitation
+- user with the role `USER` can only access their own transactions
+
+
+
 ## API Contract
 
 `GET` `/transactions`<br>
 - returns transactions form database, with summary of total income, total expences and balance
 - filtering is enabled with `optional parameter: filterByType` that can be `income` or `expenses` 
 when parameter is not present endpoint returns all Transactions, if present only Trasactions of the desired type will be returned
+- regular user can see only his transactions, admin can see them all
 
 - #### response without a filter:
 
 ```json
 {
-"summary": {
-"totalIncome": 2200.0,
-"totalExpense": 1350.0,
-"balance": 850.0
-},
-"transactions": [
-{
-"id": 1,
-"type": "income",
-"amount": 2100.0,
-"description": "salary"
-},
-{
-"id": 2,
-"type": "income",
-"amount": 100.0,
-"description": "got on poker"
-},
-{
-"id": 3,
-"type": "expense",
-"amount": 1300.0,
-"description": "car repair"
-},
-{
-"id": 4,
-"type": "expense",
-"amount": 150.0,
-"description": "house expences"
-}
-]
+    "summary": {
+        "totalIncome": 2200.0,
+        "totalExpense": 1350.0,
+        "balance": 850.0
+    },
+    "transactions": [
+        {
+            "id": 1,
+            "type": "income",
+            "amount": 2100.0,
+            "description": "salary"
+        },
+        {
+            "id": 2,
+            "type": "income",
+            "amount": 100.0,
+            "description": "got on poker"
+        },
+        {
+            "id": 3,
+            "type": "expense",
+            "amount": 1300.0,
+            "description": "car repair"
+        },
+        {
+            "id": 4,
+            "type": "expense",
+            "amount": 150.0,
+            "description": "house expences"
+        }
+    ]
 }
 ```
 <br>
@@ -72,23 +82,23 @@ when parameter is not present endpoint returns all Transactions, if present only
 - #### respose with applied filter  `filterByType = income` 
 ```json
 {
-"summary": {
-"totalIncome": 2200.0
-},
-"transactions": [
-{
-"id": 1,
-"type": "income",
-"amount": 2100.0,
-"description": "salary"
-},
-{
-"id": 2,
-"type": "got on poker",
-"amount": 150.0,
-"description": "weekend trip"
-}
-]
+    "summary": {
+        "totalIncome": 2200.0
+    },
+    "transactions": [
+        {
+            "id": 1,
+            "type": "income",
+            "amount": 2100.0,
+            "description": "salary"
+        },
+        {
+            "id": 2,
+            "type": "got on poker",
+            "amount": 150.0,
+            "description": "weekend trip"
+        }
+    ]
 }
 ```
 
@@ -118,18 +128,20 @@ when parameter is not present endpoint returns all Transactions, if present only
 
 `POST` `/transactions/new`
 - Endpoint for creating new Transactions
+- available to all authenticated users
 - #### example request body
 ```json
 {
-"type": "expense",
-"amount": 50.0,
-"description": "new expense"
+    "type": "expense",
+    "amount": 50.0,
+    "description": "new expense"
 }
 ```
 <br>
 
 `PUT` `/transactions/{id}`
 - updates Transaction
+- users can update only transactions they created, admins can update any transaction
 - #### example POST request:
 
 - url: `/transactions/3`
@@ -145,6 +157,7 @@ when parameter is not present endpoint returns all Transactions, if present only
 
 - `DELETE` `/transactions/{id}`
 - deletes Transaction with the given Id from the database
+- users can delete only transactions they created, admins can delete any transaction
 
 
 
