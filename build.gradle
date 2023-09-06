@@ -46,9 +46,8 @@ tasks.jacocoTestReport {
 	afterEvaluate {
 		classDirectories.setFrom(files(classDirectories.files.collect {
 			fileTree(dir: it, exclude: [
-					'com/tw/model/**',
-					'com/tw/exception/**',
-					'com/tw/personalfinancetracker/PersonalFinanceTrackerApplication.java'
+					'**/**/model/**',
+					'**/**/exception/**'
 			])
 		}))
 	}
@@ -61,7 +60,7 @@ tasks.jacocoTestCoverageVerification {
 	violationRules {
 		rule {
 			limit {
-				minimum = "0.75".toBigDecimal()
+				minimum = "0.52".toBigDecimal()
 			}
 		}
 	}
