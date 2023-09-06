@@ -5,9 +5,9 @@ All CRUD operations are enabled Trough RESTful APIs, as well as basic `filtering
 
 ### Stack:
 - Java 17
-- gradle
-- Spring Boot
-- H2 in memory database
+- gradle 8.0.2
+- Spring Boot 3
+- H2 in-memory database
 
 
 
@@ -35,7 +35,7 @@ All CRUD operations are enabled Trough RESTful APIs, as well as basic `filtering
 
 `GET` `/transactions`<br>
 - returns transactions form database, with summary of total income, total expences and balance
-- filtering is enabled with `optional parameter: filterByType` that can be `income` or `expenses` 
+- filtering is enabled with `optional parameter: typeFilter` that can be `income` or `expenses` 
 when parameter is not present endpoint returns all Transactions, if present only Trasactions of the desired type will be returned
 - regular user can see only his transactions, admin can see them all
 
@@ -79,7 +79,7 @@ when parameter is not present endpoint returns all Transactions, if present only
 <br>
 
 - with applied filter, user will get Transactions of the desired type and `Summary` section shows only `totalIncome` or `totalExpense` depending on the filter
-- #### respose with applied filter  `filterByType = income` 
+- #### respose with applied filter  `typeFilter = income` 
 ```json
 {
     "summary": {
@@ -102,7 +102,7 @@ when parameter is not present endpoint returns all Transactions, if present only
 }
 ```
 
-- #### respose with applied filter  `filterByType = expense`
+- #### respose with applied filter  `typeFilter = expense`
 ```json
 {
   "summary": {
