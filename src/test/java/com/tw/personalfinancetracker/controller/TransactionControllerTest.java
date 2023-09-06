@@ -84,7 +84,7 @@ class TransactionControllerTest {
                 )
                 .andExpect(status().isOk());
 
-        Mockito.verify(service, times(1)).update(any());
+        Mockito.verify(service, times(1)).update(any(), any());
     }
 
 }

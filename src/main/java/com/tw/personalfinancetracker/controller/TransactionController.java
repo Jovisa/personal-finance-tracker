@@ -7,7 +7,6 @@ import com.tw.personalfinancetracker.service.TransactionService;
 import jakarta.annotation.Nullable;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
@@ -23,42 +22,36 @@ public class TransactionController {
             @Nullable @RequestParam String typeFilter,
             @AuthenticationPrincipal UserDetails user
     ) {
-        var serviceRequest = TransactionServiceRequest
-                .builder()
-                .userAuthorities(
-                    user.getAuthorities()
-                            .stream()
-                            .map(GrantedAuthority::getAuthority)
-                            .toList()
-                )
-                .userId(user.getUsername())
-                .typeFilter(typeFilter)
-                .build();
-
+        var serviceRequest = new TransactionServiceRequest(user, typeFilter);
         return transactionService.getAllTransactions(serviceRequest);
     }
 
     @PostMapping("transactions/new")
     public void addTransaction(
             @Valid @RequestBody Transaction transaction,
-            @AuthenticationPrincipal UserDetails userDetails
+            @AuthenticationPrincipal UserDetails user
     ) {
-        transaction.setUserId(userDetails.getUsername());
+        transaction.setUserId(user.getUsername());
         transactionService.save(transaction);
     }
 
     @PutMapping("transactions/{id}")
     public void updateTransaction(
             @PathVariable Long id,
-            @Valid @RequestBody Transaction transaction
+            @Valid @RequestBody Transaction transaction,
+            @AuthenticationPrincipal UserDetails user
     ) {
         transaction.setId(id);
-        transactionService.update(transaction);
+        var serviceRequest = new TransactionServiceRequest(user);
+        transactionService.update(transaction, serviceRequest);
     }
 
     @DeleteMapping("transactions/{id}")
-    public void deleteTransaction(@PathVariable Long id) {
-        transactionService.deleteTransaction(id);
+    public void deleteTransaction(
+            @PathVariable Long id,
+            @AuthenticationPrincipal UserDetails user
+    ) {
+        transactionService.deleteTransaction(id, new TransactionServiceRequest(user));
     }
 
 }

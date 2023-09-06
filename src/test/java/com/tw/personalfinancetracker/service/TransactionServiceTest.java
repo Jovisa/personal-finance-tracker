@@ -80,8 +80,8 @@ class TransactionServiceTest {
     @Test
     public void serviceCallsDeleteMethodOfRepositoryTest() {
         Mockito.when(repository.existsById(1L)).thenReturn(true);
-        doNothing().when(repository).deleteById(any(Long.class));
-        service.deleteTransaction(1L);
+        doNothing().when(repository).deleteById(1L);
+        service.deleteTransaction(1L, serviceRequest);
         Mockito.verify(repository, times(1)).deleteById(any(Long.class));
     }
 
@@ -90,7 +90,7 @@ class TransactionServiceTest {
         Mockito.when(repository.existsById(1L)).thenReturn(false);
 
         Exception exception = assertThrows(TransactionNotFoundException.class, () ->
-            service.deleteTransaction(1L)
+            service.deleteTransaction(eq(1L), serviceRequest)
         );
         assertEquals("Transaction you were trying to delete doesn't exist", exception.getMessage());
     }
@@ -98,7 +98,8 @@ class TransactionServiceTest {
     @Test
     public void serviceCallsRepositoryToUpdateTransaction() {
         Transaction transaction = new Transaction( 1L, "1",  "income", 1.0, "");
-        service.update(transaction);
+        when(repository.existsById(1L)).thenReturn(true);
+        service.update(transaction, serviceRequest);
         Mockito.verify(repository, times(1)).save(transaction);
     }
 
