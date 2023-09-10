@@ -1,7 +1,7 @@
 package com.tw.personalfinancetracker.repository;
 
 import com.tw.personalfinancetracker.model.Transaction;
-import org.junit.jupiter.api.BeforeEach;
+import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -17,12 +17,8 @@ class TransactionRepositoryTest {
     private TransactionRepository repository;
 
 
-    @BeforeEach
-    public void clearDb() {
-        repository.deleteAll();
-    }
-
     @Test
+    @Transactional
     public void repositoryCreatesAndGetsEntitiesTest() {
         repository.save(new Transaction("1", "income", 1.0, ""));
         repository.save(new Transaction("1", "expense", 2.0, ""));
@@ -36,6 +32,7 @@ class TransactionRepositoryTest {
     }
 
     @Test
+    @Transactional
     public void deleteTransactionByIdTest() {
         Transaction incomeTransaction = repository.save(new Transaction("1", "income", 1.0, ""));
         Transaction expenseTransaction = repository.save(new Transaction("1", "expense", 2.0, ""));
@@ -52,6 +49,7 @@ class TransactionRepositoryTest {
     }
 
     @Test
+    @Transactional
     public void updateTransactionTest() {
         Transaction incomeTransaction = repository.save(new Transaction("1", "income", 1.0, "income description"));
         Transaction expenseTransaction = repository.save(new Transaction("1", "expense", 2.0, ""));
@@ -69,6 +67,5 @@ class TransactionRepositoryTest {
         assertEquals(10.0, updatedIncomeTransaction.getAmount());
         assertEquals("new descrption", updatedIncomeTransaction.getDescription());
     }
-
 
 }
