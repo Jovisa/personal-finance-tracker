@@ -8,11 +8,7 @@ import com.tw.personalfinancetracker.repository.TransactionRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.util.List;
 
@@ -24,18 +20,13 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-@SpringBootTest
+
 class TransactionServiceTest {
+    private final TransactionRepository repository = mock(TransactionRepository.class);
 
-    @MockBean
-    private TransactionRepository repository;
+    private final TransactionService service = new TransactionService(repository);
 
-    @Autowired
-    private TransactionService service;
-
-    @Mock
-    private TransactionServiceRequest serviceRequest;
-
+    private final TransactionServiceRequest serviceRequest = mock(TransactionServiceRequest.class);
 
     @BeforeEach
     public void init() {
