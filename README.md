@@ -33,6 +33,10 @@ All CRUD operations are enabled Trough RESTful APIs, as well as basic `filtering
 
 ## API Contract
 
+`Swagger docks:`
+- http://localhost:8080/swagger-ui/index.html#/search-controller/search
+</br><br>
+
 `GET` `/transactions`<br>
 - returns transactions form database, with summary of total income, total expences and balance
 - filtering is enabled with `optional parameter: typeFilter` that can be `income` or `expenses` 

@@ -33,7 +33,6 @@ class TransactionServiceTest {
         when(serviceRequest.getUserId()).thenReturn("1");
         when(serviceRequest.getUserAuthorities()).thenReturn(List.of(ROLE_ADMIN));
         when(serviceRequest.getTypeFilter()).thenReturn(null);
-
     }
 
 
