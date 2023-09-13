@@ -2,6 +2,7 @@ package com.tw.personalfinancetracker.service;
 
 import com.tw.personalfinancetracker.exception.TransactionNotFoundException;
 import com.tw.personalfinancetracker.exception.WrongFilterException;
+import com.tw.personalfinancetracker.mapper.TransactionMapper;
 import com.tw.personalfinancetracker.model.Transaction;
 import com.tw.personalfinancetracker.model.TransactionServiceRequest;
 import com.tw.personalfinancetracker.repository.TransactionRepository;
@@ -11,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import java.util.List;
+import java.util.Optional;
 
 import static com.tw.personalfinancetracker.util.Constants.INCOME;
 import static com.tw.personalfinancetracker.util.Constants.ROLE_ADMIN;
@@ -23,16 +25,27 @@ import static org.mockito.Mockito.*;
 
 class TransactionServiceTest {
     private final TransactionRepository repository = mock(TransactionRepository.class);
-
-    private final TransactionService service = new TransactionService(repository);
+    private final TransactionMapper mapper = mock(TransactionMapper.class);
+    private final TransactionService service = new TransactionService(repository, mapper);
 
     private final TransactionServiceRequest serviceRequest = mock(TransactionServiceRequest.class);
+    private final Transaction transaction = mock(Transaction.class);
 
     @BeforeEach
     public void init() {
         when(serviceRequest.getUserId()).thenReturn("1");
         when(serviceRequest.getUserAuthorities()).thenReturn(List.of(ROLE_ADMIN));
         when(serviceRequest.getTypeFilter()).thenReturn(null);
+        when(serviceRequest.getTransactionId()).thenReturn(1L);
+
+        when(transaction.getId()).thenReturn(1L);
+        when(transaction.getUserId()).thenReturn("1");
+        when(transaction.getType()).thenReturn("income");
+        when(transaction.getAmount()).thenReturn(1.0);
+        when(transaction.getDescription()).thenReturn("");
+
+        when(repository.existsById(any())).thenReturn(true);
+        when(repository.findById(1L)).thenReturn(Optional.of(transaction));
     }
 
 
@@ -69,35 +82,32 @@ class TransactionServiceTest {
 
     @Test
     public void serviceCallsDeleteMethodOfRepositoryTest() {
-        Mockito.when(repository.existsById(1L)).thenReturn(true);
-        doNothing().when(repository).deleteById(1L);
-        service.deleteTransaction(1L, serviceRequest);
+        service.deleteTransaction(serviceRequest);
         Mockito.verify(repository, times(1)).deleteById(any(Long.class));
     }
 
     @Test
     public void deleteThrowsExceptionIfIdNotExist() {
-        Mockito.when(repository.existsById(1L)).thenReturn(false);
+        Mockito.when(repository.findById(any())).thenReturn(Optional.empty());
 
         Exception exception = assertThrows(TransactionNotFoundException.class, () ->
-            service.deleteTransaction(eq(1L), serviceRequest)
+            service.deleteTransaction(serviceRequest)
         );
+
         assertEquals("Transaction you were trying to delete doesn't exist", exception.getMessage());
     }
 
+
     @Test
     public void serviceCallsRepositoryToUpdateTransaction() {
-        Transaction transaction = new Transaction( 1L, "1",  "income", 1.0, "");
-        when(repository.existsById(1L)).thenReturn(true);
-        service.update(transaction, serviceRequest);
-        Mockito.verify(repository, times(1)).save(transaction);
+        service.update(serviceRequest);
+        Mockito.verify(repository, times(1)).save(any());
     }
 
     @Test
     public void serviceCallRpositoryToAddNewTransactionTest() {
-        Transaction transaction = new Transaction( 1L, "1", "income", 1.0, "");
-        service.save(transaction);
-        Mockito.verify(repository, times(1)).save(transaction);
+        service.save(serviceRequest);
+        Mockito.verify(repository, times(1)).save(any());
     }
 
 }

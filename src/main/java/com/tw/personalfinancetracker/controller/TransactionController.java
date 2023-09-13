@@ -1,8 +1,8 @@
 package com.tw.personalfinancetracker.controller;
 
-import com.tw.personalfinancetracker.model.Transaction;
 import com.tw.personalfinancetracker.model.TransactionServiceRequest;
-import com.tw.personalfinancetracker.model.dto.TransactionDataResponse;
+import com.tw.personalfinancetracker.model.dto.request.TransactionRequest;
+import com.tw.personalfinancetracker.model.dto.response.TransactionDataResponse;
 import com.tw.personalfinancetracker.service.TransactionService;
 import jakarta.annotation.Nullable;
 import jakarta.validation.Valid;
@@ -29,22 +29,26 @@ public class TransactionController {
 
     @PostMapping("")
     public void addTransaction(
-            @Valid @RequestBody Transaction transaction,
+            @Valid @RequestBody TransactionRequest request,
             @AuthenticationPrincipal UserDetails user
     ) {
-        transaction.setUserId(user.getUsername());
-        transactionService.save(transaction);
+        var serviceRequest = TransactionServiceRequest
+                .builder()
+                .request(request)
+                .userId(user.getUsername())
+                .build();
+
+        transactionService.save(serviceRequest);
     }
 
     @PutMapping("/{id}")
     public void updateTransaction(
             @PathVariable Long id,
-            @Valid @RequestBody Transaction transaction,
+            @Valid @RequestBody TransactionRequest request,
             @AuthenticationPrincipal UserDetails user
     ) {
-        transaction.setId(id);
-        var serviceRequest = new TransactionServiceRequest(user);
-        transactionService.update(transaction, serviceRequest);
+        var serviceRequest = new TransactionServiceRequest(request, id, user);
+        transactionService.update(serviceRequest);
     }
 
     @DeleteMapping("/{id}")
@@ -52,7 +56,7 @@ public class TransactionController {
             @PathVariable Long id,
             @AuthenticationPrincipal UserDetails user
     ) {
-        transactionService.deleteTransaction(id, new TransactionServiceRequest(user));
+        transactionService.deleteTransaction(new TransactionServiceRequest(user, id));
     }
 
 }

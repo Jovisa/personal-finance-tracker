@@ -3,9 +3,10 @@ package com.tw.personalfinancetracker.service;
 import com.tw.personalfinancetracker.exception.PermissionDeniedException;
 import com.tw.personalfinancetracker.exception.TransactionNotFoundException;
 import com.tw.personalfinancetracker.exception.WrongFilterException;
+import com.tw.personalfinancetracker.mapper.TransactionMapper;
 import com.tw.personalfinancetracker.model.Transaction;
 import com.tw.personalfinancetracker.model.TransactionServiceRequest;
-import com.tw.personalfinancetracker.model.dto.TransactionDataResponse;
+import com.tw.personalfinancetracker.model.dto.response.TransactionDataResponse;
 import com.tw.personalfinancetracker.repository.TransactionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -14,71 +15,64 @@ import java.util.List;
 import java.util.Objects;
 
 import static com.tw.personalfinancetracker.util.Constants.ROLE_ADMIN;
-import static com.tw.personalfinancetracker.util.Constants.ROLE_USER;
 
 @Service
 @RequiredArgsConstructor
 public class TransactionService {
 
     private final TransactionRepository repository;
+    private final TransactionMapper mapper;
 
 
-    public void save(Transaction transaction) {
+    public void save(TransactionServiceRequest serviceRequest) {
+        var transaction = mapper.toTransaction(serviceRequest.getRequest(), serviceRequest.getUserId());
         repository.save(transaction);
     }
 
-    public void update(Transaction transaction, TransactionServiceRequest request) {
+    public void update(TransactionServiceRequest serviceRequest) {
+        Transaction transaction = repository.findById(serviceRequest.getTransactionId())
+                .orElseThrow(()
+                        -> new TransactionNotFoundException("Transaction you're trying to update doesn't exist"));
 
-        if (!repository.existsById(transaction.getId())) {
-            throw new TransactionNotFoundException("Transaction you're trying to update doesn't exist");
-        }
+        transaction = mapper.toTransaction(transaction, serviceRequest.getRequest());
 
-        if (isAdmin(request.getUserAuthorities())) {
+        if (isAdmin(serviceRequest.getUserAuthorities())) {
             repository.save(transaction);
         } else {
-            handleUserUpdate(transaction, request.getUserId());
+            handleUserUpdate(transaction, serviceRequest.getUserId());
         }
     }
 
     private void handleUserUpdate(Transaction transaction, String userId) {
-        if (!isOwner(transaction.getId(), userId)) {
+        if (isNotOwner(transaction.getUserId(), userId)) {
             throw new PermissionDeniedException("Permission Denied, you can only update your Transactions");
         }
 
-        transaction.setUserId(userId);
         repository.save(transaction);
     }
 
-    private boolean isOwner(Long transactionId, String userId) {
-        var transaction = repository
-                .findById(transactionId)
-                .orElseThrow(() -> new TransactionNotFoundException("Transaction doesn't exist"));
-        return userId.equals(transaction.getUserId());
+    private boolean isNotOwner(String ownerId, String userId) {
+        return !userId.equals(ownerId);
     }
 
+    public void deleteTransaction(TransactionServiceRequest serviceRequest) {
+        Long transactionId = serviceRequest.getTransactionId();
+        String userId = serviceRequest.getUserId();
 
-    public void deleteTransaction(Long transactionId, TransactionServiceRequest request) {
+        Transaction transaction = repository.findById(transactionId)
+                .orElseThrow(()
+                        -> new TransactionNotFoundException("Transaction you were trying to delete doesn't exist"));
 
-        if (!repository.existsById(transactionId)) {
-            throw new TransactionNotFoundException("Transaction you were trying to delete doesn't exist");
-        }
-
-        if (isAdmin(request.getUserAuthorities())) {
+        if (isAdmin(serviceRequest.getUserAuthorities())) {
             repository.deleteById(transactionId);
-        } else {
-            handleUserDelete(transactionId, request.getUserId());
-        }
 
-    }
-
-    private void handleUserDelete(Long transactionId, String userId) {
-        if (!isOwner(transactionId, userId)) {
+        } else if (isNotOwner(transaction.getUserId(), userId)) {
             throw new PermissionDeniedException("Permission Denied, you can only delete your own Transactions");
+
+        } else {
+            repository.deleteById(transactionId);
         }
-
-        repository.deleteById(transactionId);
     }
-
 
     public TransactionDataResponse getAllTransactions(TransactionServiceRequest request) {
         List<Transaction> transactions = getListOfAllTransactions(request.getTypeFilter());
@@ -102,10 +96,6 @@ public class TransactionService {
 
     private boolean isAdmin(List<String> userAuthorities) {
         return hasAuthority(userAuthorities, ROLE_ADMIN);
-    }
-
-    private boolean isUser(List<String> userAuthorities) {
-        return hasAuthority(userAuthorities, ROLE_USER);
     }
 
     public List<Transaction> getListOfAllTransactions(String typeFilter) {

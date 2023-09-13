@@ -4,8 +4,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,18 +19,9 @@ public class Transaction {
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO)
     private Long id;
-
     private String userId;
-
-    @Pattern(
-            regexp = "^(income|expense)$",
-            message = "type must be 'income' or 'expense'"
-    )
     private String type;
-
-    @Positive(message = "Amount must be a positive number")
     private Double amount;
-
     private String description;
 
     public Transaction(String userId, String type, Double amount, String description) {

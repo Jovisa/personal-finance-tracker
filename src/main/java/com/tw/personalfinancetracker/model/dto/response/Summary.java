@@ -1,4 +1,4 @@
-package com.tw.personalfinancetracker.model.dto;
+package com.tw.personalfinancetracker.model.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;

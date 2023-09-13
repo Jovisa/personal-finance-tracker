@@ -1,4 +1,4 @@
-package com.tw.personalfinancetracker.model.dto;
+package com.tw.personalfinancetracker.model.dto.response;
 
 import com.tw.personalfinancetracker.model.Transaction;
 import lombok.Getter;
