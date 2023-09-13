@@ -3,8 +3,8 @@ package com.tw.personalfinancetracker.service;
 import com.tw.personalfinancetracker.exception.TransactionNotFoundException;
 import com.tw.personalfinancetracker.exception.WrongFilterException;
 import com.tw.personalfinancetracker.mapper.TransactionMapper;
-import com.tw.personalfinancetracker.model.entity.Transaction;
 import com.tw.personalfinancetracker.model.TransactionServiceRequest;
+import com.tw.personalfinancetracker.model.entity.Transaction;
 import com.tw.personalfinancetracker.repository.TransactionRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -83,7 +83,7 @@ class TransactionServiceTest {
     @Test
     public void serviceCallsDeleteMethodOfRepositoryTest() {
         service.deleteTransaction(serviceRequest);
-        Mockito.verify(repository, times(1)).deleteById(any(Long.class));
+        Mockito.verify(repository, times(1)).delete(any());
     }
 
     @Test
@@ -94,7 +94,7 @@ class TransactionServiceTest {
             service.deleteTransaction(serviceRequest)
         );
 
-        assertEquals("Transaction you were trying to delete doesn't exist", exception.getMessage());
+        assertEquals("Transaction doesn't exist", exception.getMessage());
     }
 
 
@@ -103,6 +103,32 @@ class TransactionServiceTest {
         service.update(serviceRequest);
         Mockito.verify(repository, times(1)).save(any());
     }
+
+    @Test
+    public void updateThrowsExceptionIfIdINotExist() {
+        Mockito.when(repository.findById(any())).thenReturn(Optional.empty());
+
+        Exception exception = assertThrows(TransactionNotFoundException.class, () ->
+                service.update(serviceRequest)
+        );
+
+        assertEquals("Transaction doesn't exist", exception.getMessage());
+    }
+
+//    @Test
+//    public void updateThrowsExceptionAccesDenied() {
+//
+//        when(transaction.getUserId()).thenReturn("2");
+//        when(serviceRequest.getUserId()).thenReturn("1");
+//        Mockito.when(repository.findById(any())).thenReturn(Optional.of(transaction));
+//
+//
+//        Exception exception = assertThrows(PermissionDeniedException.class, () ->
+//                service.update(serviceRequest)
+//        );
+//
+//        assertEquals("Permission Denied, you can manage only your Transactions", exception.getMessage());
+//    }
 
     @Test
     public void serviceCallRpositoryToAddNewTransactionTest() {

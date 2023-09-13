@@ -4,17 +4,19 @@ import com.tw.personalfinancetracker.exception.PermissionDeniedException;
 import com.tw.personalfinancetracker.exception.TransactionNotFoundException;
 import com.tw.personalfinancetracker.exception.WrongFilterException;
 import com.tw.personalfinancetracker.mapper.TransactionMapper;
-import com.tw.personalfinancetracker.model.entity.Transaction;
 import com.tw.personalfinancetracker.model.TransactionServiceRequest;
 import com.tw.personalfinancetracker.model.dto.response.TransactionDataResponse;
+import com.tw.personalfinancetracker.model.entity.Transaction;
 import com.tw.personalfinancetracker.repository.TransactionRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Objects;
 
 import static com.tw.personalfinancetracker.util.Constants.ROLE_ADMIN;
+import static com.tw.personalfinancetracker.util.UserUtil.isNotOwner;
 
 @Service
 @RequiredArgsConstructor
@@ -25,57 +27,39 @@ public class TransactionService {
 
 
     public void save(TransactionServiceRequest serviceRequest) {
-        var transaction = mapper.toTransaction(serviceRequest.getRequest(), serviceRequest.getUserId());
+        var transaction = mapper.toTransaction(
+                serviceRequest.getRequest(),
+                serviceRequest.getUserId()
+        );
         repository.save(transaction);
     }
 
-
-
-    public void deleteTransaction(TransactionServiceRequest serviceRequest) {
-        Long transactionId = serviceRequest.getTransactionId();
-        String userId = serviceRequest.getUserId();
-
-        Transaction transaction = repository.findById(transactionId)
-                .orElseThrow(()
-                        -> new TransactionNotFoundException("Transaction you were trying to delete doesn't exist"));
-
-        if (isAdmin(serviceRequest.getUserAuthorities())) {
-            repository.deleteById(transactionId);
-
-        } else if (isNotOwner(transaction.getUserId(), userId)) {
-            throw new PermissionDeniedException("Permission Denied, you can only delete your own Transactions");
-
-        } else {
-            repository.deleteById(transactionId);
-        }
+    public void update(TransactionServiceRequest serviceRequest) {
+        executeOperation(serviceRequest, CrudRepository::save);
     }
 
-    public void update(TransactionServiceRequest serviceRequest) {
+    public void deleteTransaction(TransactionServiceRequest serviceRequest) {
+        executeOperation(serviceRequest, CrudRepository::delete);
+    }
+
+    public void executeOperation(TransactionServiceRequest serviceRequest, Command command) {
+
         Transaction transaction = repository.findById(serviceRequest.getTransactionId())
                 .orElseThrow(()
-                        -> new TransactionNotFoundException("Transaction you're trying to update doesn't exist"));
+                        -> new TransactionNotFoundException("Transaction doesn't exist"));
 
         transaction = mapper.toTransaction(transaction, serviceRequest.getRequest());
 
         if (isAdmin(serviceRequest.getUserAuthorities())) {
-            repository.save(transaction);
+            command.execute(repository, transaction);
+
+        } else if (isNotOwner(transaction.getUserId(), serviceRequest.getUserId())) {
+            throw new PermissionDeniedException("Permission Denied, you can manage only your Transactions");
+
         } else {
-            handleUserUpdate(transaction, serviceRequest.getUserId());
+            command.execute(repository, transaction);
         }
     }
-
-    private void handleUserUpdate(Transaction transaction, String userId) {
-        if (isNotOwner(transaction.getUserId(), userId)) {
-            throw new PermissionDeniedException("Permission Denied, you can only update your Transactions");
-        }
-
-        repository.save(transaction);
-    }
-
-    private boolean isNotOwner(String ownerId, String userId) {
-        return !userId.equals(ownerId);
-    }
-
 
 
     public TransactionDataResponse getAllTransactions(TransactionServiceRequest request) {
