@@ -13,11 +13,12 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("/transactions")
 public class TransactionController {
 
     private final TransactionService transactionService;
 
-    @GetMapping("/transactions")
+    @GetMapping("")
     public TransactionDataResponse getTransactionsData(
             @Nullable @RequestParam String typeFilter,
             @AuthenticationPrincipal UserDetails user
@@ -26,7 +27,7 @@ public class TransactionController {
         return transactionService.getAllTransactions(serviceRequest);
     }
 
-    @PostMapping("transactions/new")
+    @PostMapping("")
     public void addTransaction(
             @Valid @RequestBody Transaction transaction,
             @AuthenticationPrincipal UserDetails user
@@ -35,7 +36,7 @@ public class TransactionController {
         transactionService.save(transaction);
     }
 
-    @PutMapping("transactions/{id}")
+    @PutMapping("/{id}")
     public void updateTransaction(
             @PathVariable Long id,
             @Valid @RequestBody Transaction transaction,
@@ -46,7 +47,7 @@ public class TransactionController {
         transactionService.update(transaction, serviceRequest);
     }
 
-    @DeleteMapping("transactions/{id}")
+    @DeleteMapping("/{id}")
     public void deleteTransaction(
             @PathVariable Long id,
             @AuthenticationPrincipal UserDetails user

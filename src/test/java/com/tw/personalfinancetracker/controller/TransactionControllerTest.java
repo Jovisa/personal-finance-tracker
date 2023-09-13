@@ -65,7 +65,7 @@ class TransactionControllerTest {
     public void addNewTransactionEndpointTest() throws Exception {
         final var request = "{\"type\":\"income\",\"amount\": 1.0,\"description\":\"\"}";
 
-        mockMvc.perform(post("/transactions/new")
+        mockMvc.perform(post("/transactions")
                         .contentType("application/json")
                         .content(request))
                 .andExpect(status().isOk());

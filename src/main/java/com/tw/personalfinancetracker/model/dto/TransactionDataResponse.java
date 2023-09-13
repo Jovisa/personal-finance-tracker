@@ -14,7 +14,7 @@ public class TransactionDataResponse {
     private List<Transaction> transactions;
 
     public TransactionDataResponse(List<Transaction> transactions) {
-        this.summary = SummaryFactory.buildSummary(transactions);
+        this.summary = new Summary(transactions);
         this.transactions = transactions;
     }
 }
