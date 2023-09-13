@@ -3,44 +3,51 @@ package com.tw.personalfinancetracker.service;
 import com.tw.personalfinancetracker.exception.TransactionNotFoundException;
 import com.tw.personalfinancetracker.exception.WrongFilterException;
 import com.tw.personalfinancetracker.model.Transaction;
-import com.tw.personalfinancetracker.model.dto.TransactionDataResponse;
+import com.tw.personalfinancetracker.model.TransactionServiceRequest;
 import com.tw.personalfinancetracker.repository.TransactionRepository;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+
+import java.util.List;
 
 import static com.tw.personalfinancetracker.util.Constants.INCOME;
+import static com.tw.personalfinancetracker.util.Constants.ROLE_ADMIN;
 import static com.tw.personalfinancetracker.util.TestUtil.TRANSACTIONS;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.*;
 
-@SpringBootTest
+
 class TransactionServiceTest {
+    private final TransactionRepository repository = mock(TransactionRepository.class);
 
-    @MockBean
-    private TransactionRepository repository;
+    private final TransactionService service = new TransactionService(repository);
 
-    @Autowired
-    private TransactionService service;
+    private final TransactionServiceRequest serviceRequest = mock(TransactionServiceRequest.class);
+
+    @BeforeEach
+    public void init() {
+        when(serviceRequest.getUserId()).thenReturn("1");
+        when(serviceRequest.getUserAuthorities()).thenReturn(List.of(ROLE_ADMIN));
+        when(serviceRequest.getTypeFilter()).thenReturn(null);
+    }
 
 
     @Test
     public void serviceReturnsDataFromRepositoryTest() {
         Mockito.when(repository.findAll()).thenReturn(TRANSACTIONS);
-        assertEquals(TRANSACTIONS, service.getAllTransactions().getTransactions());
+        assertEquals(TRANSACTIONS, service.getAllTransactions(serviceRequest).getTransactions());
     }
 
     @Test
     public void serviceWorksWithFilterIncomeTest() {
         Mockito.when(repository.findAll()).thenReturn(TRANSACTIONS);
+        when(serviceRequest.getTypeFilter()).thenReturn(INCOME);
 
-        TransactionDataResponse response = service.getAllTransactions(INCOME);
+        var response = service.getAllTransactions(serviceRequest);
 
         Mockito.verify(repository, times(1)).findAll();
         Assertions.assertEquals(1, response.getTransactions().size());
@@ -51,9 +58,10 @@ class TransactionServiceTest {
     @Test
     public void serviceThrowsExceptionWhenFilterIsInvalidTest() {
         Mockito.when(repository.findAll()).thenReturn(TRANSACTIONS);
+        when(serviceRequest.getTypeFilter()).thenReturn("invalidFilter");
 
         Exception exception = assertThrows(WrongFilterException.class, () ->
-            service.getAllTransactions("invalidFilter")
+            service.getAllTransactions(serviceRequest)
         );
 
         assertEquals("type must be 'income' or 'expense'", exception.getMessage());
@@ -62,8 +70,8 @@ class TransactionServiceTest {
     @Test
     public void serviceCallsDeleteMethodOfRepositoryTest() {
         Mockito.when(repository.existsById(1L)).thenReturn(true);
-        doNothing().when(repository).deleteById(any(Long.class));
-        service.deleteTransaction(1L);
+        doNothing().when(repository).deleteById(1L);
+        service.deleteTransaction(1L, serviceRequest);
         Mockito.verify(repository, times(1)).deleteById(any(Long.class));
     }
 
@@ -72,21 +80,22 @@ class TransactionServiceTest {
         Mockito.when(repository.existsById(1L)).thenReturn(false);
 
         Exception exception = assertThrows(TransactionNotFoundException.class, () ->
-            service.deleteTransaction(1L)
+            service.deleteTransaction(eq(1L), serviceRequest)
         );
         assertEquals("Transaction you were trying to delete doesn't exist", exception.getMessage());
     }
 
     @Test
     public void serviceCallsRepositoryToUpdateTransaction() {
-        Transaction transaction = new Transaction( 1L, "income", 1.0, "");
-        service.update(transaction);
+        Transaction transaction = new Transaction( 1L, "1",  "income", 1.0, "");
+        when(repository.existsById(1L)).thenReturn(true);
+        service.update(transaction, serviceRequest);
         Mockito.verify(repository, times(1)).save(transaction);
     }
 
     @Test
     public void serviceCallRpositoryToAddNewTransactionTest() {
-        Transaction transaction = new Transaction( 1L, "income", 1.0, "");
+        Transaction transaction = new Transaction( 1L, "1", "income", 1.0, "");
         service.save(transaction);
         Mockito.verify(repository, times(1)).save(transaction);
     }

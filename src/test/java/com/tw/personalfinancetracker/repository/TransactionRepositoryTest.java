@@ -1,31 +1,27 @@
 package com.tw.personalfinancetracker.repository;
 
 import com.tw.personalfinancetracker.model.Transaction;
-import org.junit.jupiter.api.BeforeEach;
+import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@SpringBootTest
+@DataJpaTest
 class TransactionRepositoryTest {
 
     @Autowired
     private TransactionRepository repository;
 
 
-    @BeforeEach
-    public void clearDb() {
-        repository.deleteAll();
-    }
-
     @Test
+    @Transactional
     public void repositoryCreatesAndGetsEntitiesTest() {
-        repository.save(new Transaction("income", 1.0, ""));
-        repository.save(new Transaction("expense", 2.0, ""));
+        repository.save(new Transaction("1", "income", 1.0, ""));
+        repository.save(new Transaction("1", "expense", 2.0, ""));
 
         List<Transaction> transactions = repository.findAll();
 
@@ -36,9 +32,10 @@ class TransactionRepositoryTest {
     }
 
     @Test
+    @Transactional
     public void deleteTransactionByIdTest() {
-        Transaction incomeTransaction = repository.save(new Transaction("income", 1.0, ""));
-        Transaction expenseTransaction = repository.save(new Transaction("expense", 2.0, ""));
+        Transaction incomeTransaction = repository.save(new Transaction("1", "income", 1.0, ""));
+        Transaction expenseTransaction = repository.save(new Transaction("1", "expense", 2.0, ""));
 
         List<Transaction> transactions = repository.findAll();
 
@@ -52,9 +49,10 @@ class TransactionRepositoryTest {
     }
 
     @Test
+    @Transactional
     public void updateTransactionTest() {
-        Transaction incomeTransaction = repository.save(new Transaction("income", 1.0, "income description"));
-        Transaction expenseTransaction = repository.save(new Transaction("expense", 2.0, ""));
+        Transaction incomeTransaction = repository.save(new Transaction("1", "income", 1.0, "income description"));
+        Transaction expenseTransaction = repository.save(new Transaction("1", "expense", 2.0, ""));
 
         List<Transaction> transactions = repository.findAll();
         assertEquals(2, transactions.size());
@@ -69,6 +67,5 @@ class TransactionRepositoryTest {
         assertEquals(10.0, updatedIncomeTransaction.getAmount());
         assertEquals("new descrption", updatedIncomeTransaction.getDescription());
     }
-
 
 }
