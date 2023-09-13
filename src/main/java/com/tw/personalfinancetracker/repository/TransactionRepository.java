@@ -1,6 +1,6 @@
 package com.tw.personalfinancetracker.repository;
 
-import com.tw.personalfinancetracker.model.Transaction;
+import com.tw.personalfinancetracker.model.entity.Transaction;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 

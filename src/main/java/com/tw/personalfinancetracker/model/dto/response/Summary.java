@@ -2,7 +2,7 @@ package com.tw.personalfinancetracker.model.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.tw.personalfinancetracker.model.Transaction;
+import com.tw.personalfinancetracker.model.entity.Transaction;
 import lombok.*;
 
 import java.util.List;

@@ -1,6 +1,6 @@
 package com.tw.personalfinancetracker.util;
 
-import com.tw.personalfinancetracker.model.Transaction;
+import com.tw.personalfinancetracker.model.entity.Transaction;
 import com.tw.personalfinancetracker.model.dto.response.TransactionDataResponse;
 
 import java.util.List;

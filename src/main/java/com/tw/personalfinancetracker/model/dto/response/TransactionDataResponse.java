@@ -1,6 +1,6 @@
 package com.tw.personalfinancetracker.model.dto.response;
 
-import com.tw.personalfinancetracker.model.Transaction;
+import com.tw.personalfinancetracker.model.entity.Transaction;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;

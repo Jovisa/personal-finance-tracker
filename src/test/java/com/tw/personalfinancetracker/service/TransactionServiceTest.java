@@ -3,7 +3,7 @@ package com.tw.personalfinancetracker.service;
 import com.tw.personalfinancetracker.exception.TransactionNotFoundException;
 import com.tw.personalfinancetracker.exception.WrongFilterException;
 import com.tw.personalfinancetracker.mapper.TransactionMapper;
-import com.tw.personalfinancetracker.model.Transaction;
+import com.tw.personalfinancetracker.model.entity.Transaction;
 import com.tw.personalfinancetracker.model.TransactionServiceRequest;
 import com.tw.personalfinancetracker.repository.TransactionRepository;
 import org.junit.jupiter.api.Assertions;
