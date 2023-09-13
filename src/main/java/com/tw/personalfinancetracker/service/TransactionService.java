@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Objects;
 
-import static com.tw.personalfinancetracker.util.Constants.ROLE_ADMIN;
+import static com.tw.personalfinancetracker.util.UserUtil.isAdmin;
 import static com.tw.personalfinancetracker.util.UserUtil.isNotOwner;
 
 @Service
@@ -76,15 +76,6 @@ public class TransactionService {
         return new TransactionDataResponse(userTransactions);
     }
 
-    private boolean hasAuthority(List<String> userAuthorities, String authority) {
-        return userAuthorities
-                .stream()
-                .anyMatch(authority::equals);
-    }
-
-    private boolean isAdmin(List<String> userAuthorities) {
-        return hasAuthority(userAuthorities, ROLE_ADMIN);
-    }
 
     public List<Transaction> getListOfAllTransactions(String typeFilter) {
         if (typeFilter == null) {
