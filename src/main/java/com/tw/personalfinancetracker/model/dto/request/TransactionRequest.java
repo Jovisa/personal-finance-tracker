@@ -1,6 +1,5 @@
 package com.tw.personalfinancetracker.model.dto.request;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
@@ -12,7 +11,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@JsonDeserialize(builder = TransactionRequest.TransactionRequestBuilder.class)
 public class TransactionRequest {
 
     @Pattern(

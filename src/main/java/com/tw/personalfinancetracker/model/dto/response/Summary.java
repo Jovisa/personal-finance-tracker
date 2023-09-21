@@ -1,7 +1,6 @@
 package com.tw.personalfinancetracker.model.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.tw.personalfinancetracker.model.entity.Transaction;
 import lombok.*;
 
@@ -15,7 +14,6 @@ import static com.tw.personalfinancetracker.util.Constants.INCOME;
 @Getter
 @Setter
 @Builder
-@JsonDeserialize(builder = Summary.SummaryBuilder.class)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Summary {
     private Double totalIncome;
