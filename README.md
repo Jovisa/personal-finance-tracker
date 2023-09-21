@@ -19,12 +19,12 @@ All CRUD operations are enabled Trough RESTful APIs, as well as basic `filtering
 
 ### Starting the project
 - clone repository on your local machine
-- build project with command `gradlew clean build` or via IDE
-- run project with command `gradlew bootRun` or via IDE
+- build project with the command `gradlew clean build` or via IDE
+- run the project with the command `gradlew bootRun` or via IDE
 
 ## Security
 
-- Application has predefined in-memory Users defined in [Security Configuration](https://github.com/Jovisa/personal-finance-tracker/blob/security/src/main/java/com/tw/personalfinancetracker/config/SecurityConfiguration.java)
+- Application has predefined in-memory Users defined in [Security Configuration](https://github.com/Jovisa/personal-finance-tracker/blob/main/src/main/java/com/tw/personalfinancetracker/config/SecurityConfiguration.java)
 - endpoints can be accessed by authenticated users only
 - users with the role `ADMIN` can perform all CRUD operations on all `Transactions` without any limitation
 - user with the role `USER` can only access their own transactions
@@ -38,9 +38,9 @@ All CRUD operations are enabled Trough RESTful APIs, as well as basic `filtering
 </br><br>
 
 `GET` `/transactions`<br>
-- returns transactions form database, with summary of total income, total expences and balance
+- returns transactions from database, with a summary of total income, total expenses and balance
 - filtering is enabled with `optional parameter: typeFilter` that can be `income` or `expenses` 
-when parameter is not present endpoint returns all Transactions, if present only Trasactions of the desired type will be returned
+when the parameter is not present endpoint returns all Transactions, if present only Transactions of the desired type will be returned
 - regular user can see only his transactions, admin can see them all
 
 - #### response without a filter:
@@ -82,8 +82,8 @@ when parameter is not present endpoint returns all Transactions, if present only
 ```
 <br>
 
-- with applied filter, user will get Transactions of the desired type and `Summary` section shows only `totalIncome` or `totalExpense` depending on the filter
-- #### respose with applied filter  `typeFilter = income` 
+- with the applied filter, the user will get Transactions of the desired type, and `Summary` section will show only `totalIncome` or `totalExpense` depending on the filter
+- #### response with applied filter  `typeFilter = income` 
 ```json
 {
     "summary": {
@@ -106,7 +106,7 @@ when parameter is not present endpoint returns all Transactions, if present only
 }
 ```
 
-- #### respose with applied filter  `typeFilter = expense`
+- #### response with applied filter  `typeFilter = expense`
 ```json
 {
   "summary": {
@@ -160,7 +160,7 @@ when parameter is not present endpoint returns all Transactions, if present only
 <br>
 
 - `DELETE` `/transactions/{id}`
-- deletes Transaction with the given Id from the database
+- deletes Transaction with the given ID from the database
 - users can delete only transactions they created, admins can delete any transaction
 
 
