@@ -42,8 +42,10 @@ public class TransactionService {
         executeOperation(serviceRequest, CrudRepository::delete);
     }
 
-    public void executeOperation(TransactionServiceRequest serviceRequest, Command command) {
-
+    public void executeOperation(
+            TransactionServiceRequest serviceRequest,
+            Command command
+    ) {
         Transaction transaction = repository.findById(serviceRequest.getTransactionId())
                 .orElseThrow(()
                         -> new TransactionNotFoundException("Transaction doesn't exist"));
